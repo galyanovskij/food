@@ -1,0 +1,31 @@
+.show {
+  display: block;
+}
+.hide {
+  display: none;
+}
+.fade {
+  animation-name: fade;
+  animation-duration: 2s;
+}
+@keyframes fade {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade_off {
+  animation-name: fade_off;
+  animation-duration: 2s;
+}
+@keyframes fade_off {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.1;
+  }
+}
