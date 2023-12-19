@@ -106,13 +106,56 @@ window.addEventListener('DOMContentLoaded', () => {
     //запуск таймера
     setClock('.timer', deadline);
 
+// Modal
+    const modal = document.querySelector('.modal'),
+      closeButton = modal.querySelector('[data-close]'),
+      openButton = document.querySelectorAll('[data-modal]');
+          
 
-
-
-
-
-
-
-
-
+      // при повторенні кода виносимо його в функцію
+      function openModal() {
+          // modal.style.display = 'block'; 
+          modal.classList.remove('hide');
+          modal.classList.add('show');
+          document.body.style.overflow = 'hidden'; //забираємо скрол //повертаємо скрол
+          clearInterval(modalTimeoutId); // якщо користувач сам відкриє модальне вікно то ми вже не будемо його показувати
+      }
+      function closeModal() {
+        modal.classList.remove('show');
+        modal.classList.add('hide');
+        document.body.style.overflow = ''; //повертаємо скрол
+      }
+      closeButton.addEventListener('click', closeModal); //скорочений запис виклика функції по кліку
+      // closeButton.addEventListener('click', () =>{
+      //   // modal.style.display = 'none'; 
+      //   closeModal();
+      // });
+      openButton.forEach((btn) => {
+        btn.addEventListener('click', openModal);
+      });
+      modal.addEventListener('click', (event) =>{ //клік поза модалкою
+        if (event.target == modal) {
+          closeModal();
+        }
+      });
+// ловимо події натиску клавіш  - ESC і Backspace
+      document.addEventListener('keydown', (e) =>{
+        // відслідковуємо код клавіші
+        if (e.code === 'Escape' && modal.classList.contains('show')) {
+          closeModal();
+        } else if (e.code === 'Backspace' && modal.classList.contains('show')) {
+          closeModal();
+        }
+      });
+// показ модалки через певний час
+const modalTimeoutId = setTimeout(openModal, 3000);
+// показ модалки при скролі до певної частини вікна - до кінця
+// через функцію, щоб прибрати повтор
+function showModalByScroll() {
+  if (window.scrollY  + document.documentElement.clientHeight >= document.documentElement.scrollHeight -1) {
+    openModal();
+    window.removeEventListener('scroll', showModalByScroll);//видаляємо обробник події - чітко вказуємо подію і функцію
+  }
+}
+      window.addEventListener('scroll', showModalByScroll);
 });
