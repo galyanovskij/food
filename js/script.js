@@ -118,7 +118,7 @@ window.addEventListener('DOMContentLoaded', () => {
           modal.classList.remove('hide');
           modal.classList.add('show');
           document.body.style.overflow = 'hidden'; //забираємо скрол //повертаємо скрол
-          clearInterval(modalTimeoutId); // якщо користувач сам відкриє модальне вікно то ми вже не будемо його показувати
+          // clearInterval(modalTimeoutId); // якщо користувач сам відкриє модальне вікно то ми вже не будемо його показувати
       }
       function closeModal() {
         modal.classList.remove('show');
@@ -147,15 +147,80 @@ window.addEventListener('DOMContentLoaded', () => {
           closeModal();
         }
       });
-// показ модалки через певний час
-const modalTimeoutId = setTimeout(openModal, 3000);
-// показ модалки при скролі до певної частини вікна - до кінця
-// через функцію, щоб прибрати повтор
-function showModalByScroll() {
-  if (window.scrollY  + document.documentElement.clientHeight >= document.documentElement.scrollHeight -1) {
-    openModal();
-    window.removeEventListener('scroll', showModalByScroll);//видаляємо обробник події - чітко вказуємо подію і функцію
-  }
-}
+      // показ модалки через певний час
+      // const modalTimeoutId = setTimeout(openModal, 3000);
+      // показ модалки при скролі до певної частини вікна - до кінця
+      // через функцію, щоб прибрати повтор
+      function showModalByScroll() {
+        if (window.scrollY  + document.documentElement.clientHeight >= document.documentElement.scrollHeight -1) {
+          openModal();
+          window.removeEventListener('scroll', showModalByScroll);//видаляємо обробник події - чітко вказуємо подію і функцію
+        }
+      }
       window.addEventListener('scroll', showModalByScroll);
+      // використовуємо класи для карточок товарів
+      class MenuCard {
+        constructor(src, alt, title, descr, price, parentSelector) {
+          this.src = src;
+          this.alt = alt;
+          this.title = title;
+          this.descr = descr;
+          this.price = price;
+          this.parent = document.querySelector(parentSelector); 
+          this.transfer = 38; // курс
+          this.changeToUAH();
+        }
+        // метод переведення в гривню
+        changeToUAH(){
+          this.price = this.price * this.transfer;
+        }
+        render(){
+          const element = document.createElement('div');
+          element.innerHTML = `
+          <div class="menu__item">
+            <img src=${this.src} alt=${this.alt}>
+            <h3 class="menu__item-subtitle">${this.title}</h3>
+            <div class="menu__item-descr">${this.descr}</div>
+            <div class="menu__item-divider"></div>
+            <div class="menu__item-price">
+                <div class="menu__item-cost">Ціна:</div>
+                <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+            </div>
+          </div>
+          `;
+          this.parent.append(element);
+        }
+
+      }
+      // класичний виклик обєкта
+      // const div = new MenuCard();
+      // div.render();
+      // спрощений варіант - створюємо обєкт і викликаємо у ньому метод render
+      new MenuCard(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фітнес"',
+        'Меню "Фітнес" - це новий підхід до приготування страв: більше свіжих овочів та фруктів. Продукт активних та здорових людей. Це абсолютно новий продукт з оптимальною ціною та високою якістю!',
+        9,
+        '.menu .container'
+      ).render();
+      new MenuCard(
+        "img/tabs/elite.jpg",
+        "elite",
+        'Меню “Преміум”',
+        'У меню “Преміум” ми використовуємо не лише гарний дизайн упаковки, але й якісне виконання страв. Червона риба, морепродукти, фрукти – ресторанне меню без походу до ресторану!',
+        14,
+        '.menu .container'
+      ).render();
+      new MenuCard(
+        "img/tabs/post.jpg",
+        "post",
+        'Меню "Пісне"',
+        'Меню "Пісне" - це ретельний підбір інгредієнтів: повна відсутність продуктів тваринного походження, молоко з мигдалю, вівса, кокосу чи гречки, правильна кількість білків за рахунок тофу та імпортних вегетаріанських стейків.',
+      21,
+        '.menu .container'
+      ).render();
+
+
+      
 });
