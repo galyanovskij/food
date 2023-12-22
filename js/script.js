@@ -160,12 +160,13 @@ window.addEventListener('DOMContentLoaded', () => {
       window.addEventListener('scroll', showModalByScroll);
       // використовуємо класи для карточок товарів
       class MenuCard {
-        constructor(src, alt, title, descr, price, parentSelector) {
+        constructor(src, alt, title, descr, price, parentSelector, ...classes) {
           this.src = src;
           this.alt = alt;
           this.title = title;
           this.descr = descr;
           this.price = price;
+          this.classes = classes; // це буде масив з залишкових аргументів
           this.parent = document.querySelector(parentSelector); 
           this.transfer = 38; // курс
           this.changeToUAH();
@@ -176,8 +177,15 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         render(){
           const element = document.createElement('div');
+          // перевірка на відсутність додаткових класів і введення дефолтного значення menu__item
+          if (this.classes.length === 0) {
+            this.classes = 'menu__item';
+            element.classList.add('menu__item');
+          } else {
+            this.classes.forEach(className => element.classList.add(className)); // перебираємо масив і кожне значення записуємо в class до div
+          }
+          
           element.innerHTML = `
-          <div class="menu__item">
             <img src=${this.src} alt=${this.alt}>
             <h3 class="menu__item-subtitle">${this.title}</h3>
             <div class="menu__item-descr">${this.descr}</div>
@@ -186,7 +194,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 <div class="menu__item-cost">Ціна:</div>
                 <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
             </div>
-          </div>
           `;
           this.parent.append(element);
         }
@@ -202,7 +209,9 @@ window.addEventListener('DOMContentLoaded', () => {
         'Меню "Фітнес"',
         'Меню "Фітнес" - це новий підхід до приготування страв: більше свіжих овочів та фруктів. Продукт активних та здорових людей. Це абсолютно новий продукт з оптимальною ціною та високою якістю!',
         9,
-        '.menu .container'
+        '.menu .container',
+        // 'menu__item',  ми їх не передаємо, тому отримаємо лише дефолтний клас menu__item
+        // 'big'
       ).render();
       new MenuCard(
         "img/tabs/elite.jpg",
@@ -210,7 +219,9 @@ window.addEventListener('DOMContentLoaded', () => {
         'Меню “Преміум”',
         'У меню “Преміум” ми використовуємо не лише гарний дизайн упаковки, але й якісне виконання страв. Червона риба, морепродукти, фрукти – ресторанне меню без походу до ресторану!',
         14,
-        '.menu .container'
+        '.menu .container',
+        'menu__item',
+        'big'
       ).render();
       new MenuCard(
         "img/tabs/post.jpg",
@@ -218,7 +229,9 @@ window.addEventListener('DOMContentLoaded', () => {
         'Меню "Пісне"',
         'Меню "Пісне" - це ретельний підбір інгредієнтів: повна відсутність продуктів тваринного походження, молоко з мигдалю, вівса, кокосу чи гречки, правильна кількість білків за рахунок тофу та імпортних вегетаріанських стейків.',
       21,
-        '.menu .container'
+        '.menu .container',
+        'menu__item',
+        'big'
       ).render();
 
 
