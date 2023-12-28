@@ -108,7 +108,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // Modal
     const modal = document.querySelector('.modal'),
-      closeButton = modal.querySelector('[data-close]'),
+      // closeButton = modal.querySelector('[data-close]'),
       openButton = document.querySelectorAll('[data-modal]');
           
 
@@ -125,7 +125,7 @@ window.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('hide');
         document.body.style.overflow = ''; //повертаємо скрол
       }
-      closeButton.addEventListener('click', closeModal); //скорочений запис виклика функції по кліку
+      // closeButton.addEventListener('click', closeModal); //скорочений запис виклика функції по кліку
       // closeButton.addEventListener('click', () =>{
       //   // modal.style.display = 'none'; 
       //   closeModal();
@@ -134,7 +134,7 @@ window.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', openModal);
       });
       modal.addEventListener('click', (event) =>{ //клік поза модалкою
-        if (event.target == modal) {
+        if (event.target == modal || event.target.getAttribute('data-close') == '') {
           closeModal();
         }
       });
@@ -238,7 +238,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const forms = document.querySelectorAll('form');
   //створимо обєкт з переліком фраз для фідбека користувачу
   const message = {
-    loading: 'Завантаження',
+    loading: 'icons/spinner.svg',
     success: 'Дякуємо. Незабаром ми з вами зконтактуємо',
     failure: 'Щось відбулось не за планом'
   };
@@ -287,14 +287,18 @@ window.addEventListener('DOMContentLoaded', () => {
   function postData(form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const statusMessage = document.createElement('div');
-      statusMessage.classList.add('status'); 
-      statusMessage.textContent = message.loading; 
-      form.append(statusMessage);
+      const statusMessage = document.createElement('img');
+      statusMessage.src = message.loading; 
+      statusMessage.style.cssText = `
+        display: block;
+        margin: 0 auto;  
+      `; 
+      // form.append(statusMessage); //деформує флекси на сторінці тож переробимо
+      form.insertAdjacentElement('afterend', statusMessage);
 
       const request = new XMLHttpRequest();
       request.open('POST', 'server.php')
-      request.setRequestHeader('Content-type', 'app;ication/json'); // пишемо заголовок
+      request.setRequestHeader('Content-type', 'application/json; charset=utf-8'); // пишемо заголовок
       const formData = new FormData(form);
 
       //певодимо циклом дані в json
@@ -310,18 +314,44 @@ window.addEventListener('DOMContentLoaded', () => {
       request.addEventListener('load', () => {
         if (request.status === 200) {
           console.log(request.response);
-          statusMessage.textContent = message.success; 
-          form.reset(); 
-          setTimeout(() =>{
-            statusMessage.remove();
-          }, 3000);
-        } else {
-          statusMessage.textContent = message.failure; 
+          showThanksModal(message.success); 
+          statusMessage.remove();
+          form.reset();
+          } else {
+          showThanksModal(message.failure); 
+          // statusMessage.textContent = message.failure; 
         }
       });
     });
   }
-
+  // функціяпоказу модального вікна з повідомленням
+  function showThanksModal(message) {
+    //отримуємо блок існуючого модального вікна
+    const prevModalDialog = document.querySelector('.modal__dialog');
+    //ховаємо попередній контент
+    prevModalDialog.classList.add('hide');
+    //відкриваємо модальне вікно існуючою функцією
+    openModal();
+    // створюємо новий контент
+    const thanksModal = document.createElement('div');
+    thanksModal.classList.add('modal__dialog');
+    // формуємо верстку
+    thanksModal.innerHTML = `
+      <div class="modal__content">
+        <div class="modal__close" data-close>&times;</div>
+        <div class="modal_title">${message}</div>
+      </div>
+    `;
+    //виводимо модальне вікно
+    document.querySelector('.modal').append(thanksModal);
+    // через 4 сек будемо видаляти ы показати поперелный корнтент
+    setTimeout(() =>{
+      thanksModal.remove();
+      prevModalDialog.classList.add('show');
+      prevModalDialog.classList.remove('hide');
+      closeModal();
+    }, 4000);
+  }
 
 
 

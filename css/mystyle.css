@@ -9,11 +9,6 @@
   animation-duration: 2s;
 }
 
-.status {
-  margin-top: 20px;
-  text-align: center;
-  
-}
 @keyframes fade {
   from {
     opacity: 0.1;
