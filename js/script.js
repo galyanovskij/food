@@ -234,6 +234,99 @@ window.addEventListener('DOMContentLoaded', () => {
         'big'
       ).render();
 
+// FORMS
+  const forms = document.querySelectorAll('form');
+  //створимо обєкт з переліком фраз для фідбека користувачу
+  const message = {
+    loading: 'Завантаження',
+    success: 'Дякуємо. Незабаром ми з вами зконтактуємо',
+    failure: 'Щось відбулось не за планом'
+  };
+  // перебираємо форми на сторінці і під кожну з них підвяжемо функцію  postData
+    forms.forEach(item =>{
+      postData(item);
+
+    });
+
+  //функція для постингу даних
+        // function postData(form) {
+        //   //обробник події - спрацьовує коли ми намагаємось відправити дані ентером чи кнопкою
+        //   form.addEventListener('submit', (e) => {
+        //     e.preventDefault();//відміняємо перезавантаження браузера
+        //     // створюємо блок для повідомлення користувачу
+        //     const statusMessage = document.createElement('div');
+        //     statusMessage.classList.add('status'); // додаємо діву клас
+        //     statusMessage.textContent = message.loading; //додаємо в div повідомлення
+        //     //відправляємо блок з повідомленням на сторінку внизу форми
+        //     form.append(statusMessage);
+
+        //     const request = new XMLHttpRequest();
+        //     request.open('POST', 'server.php')
+        //     // request.setRequestHeader('Content-type', 'multipart/form-data'); // заголовок не потрібен при використанні FormData
+        //     //формуємо дані з форми в обєкт у імпутів має завжди бути атрибут  name="name" name="phone"
+        //     const formData = new FormData(form);
+        //     //відправка даних
+        //     request.send(formData);
+        //     //обробник події
+        //     request.addEventListener('load', () => {
+        //       if (request.status === 200) {
+        //         console.log(request.response);
+        //         statusMessage.textContent = message.success; //змінюємо повідомлення коористувачу
+        //         form.reset(); //чистимо форму
+        //         // видалимо блок з повідомленням зі сторінки через 3 сек
+        //         setTimeout(() =>{
+        //           statusMessage.remove();
+        //         }, 3000);
+        //       } else {
+        //         statusMessage.textContent = message.failure; 
+        //       }
+        //     });
+        //   });
+        // }
+  // для відправки даних в json форматі  
+  function postData(form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const statusMessage = document.createElement('div');
+      statusMessage.classList.add('status'); 
+      statusMessage.textContent = message.loading; 
+      form.append(statusMessage);
+
+      const request = new XMLHttpRequest();
+      request.open('POST', 'server.php')
+      request.setRequestHeader('Content-type', 'app;ication/json'); // пишемо заголовок
+      const formData = new FormData(form);
+
+      //певодимо циклом дані в json
+      const object = {};
+      formData.forEach(function(value, key){
+        object[key] = value;
+      });
+
+      const json = JSON.stringify(object);
+
+
+      request.send(json); // formData змінюємо на json + дописуємо стрічку в файл server.php
+      request.addEventListener('load', () => {
+        if (request.status === 200) {
+          console.log(request.response);
+          statusMessage.textContent = message.success; 
+          form.reset(); 
+          setTimeout(() =>{
+            statusMessage.remove();
+          }, 3000);
+        } else {
+          statusMessage.textContent = message.failure; 
+        }
+      });
+    });
+  }
+
+
+
+
+
+
 
       
 });
