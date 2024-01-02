@@ -284,46 +284,85 @@ window.addEventListener('DOMContentLoaded', () => {
         //   });
         // }
   // для відправки даних в json форматі  
+  // function postData(form) {
+  //   form.addEventListener('submit', (e) => {
+  //     e.preventDefault();
+  //     const statusMessage = document.createElement('img');
+  //     statusMessage.src = message.loading; 
+  //     statusMessage.style.cssText = `
+  //       display: block;
+  //       margin: 0 auto;  
+  //     `; 
+  //     // form.append(statusMessage); //деформує флекси на сторінці тож переробимо
+  //     form.insertAdjacentElement('afterend', statusMessage);
+
+  //     const request = new XMLHttpRequest();
+  //     request.open('POST', 'server.php')
+  //     request.setRequestHeader('Content-type', 'application/json; charset=utf-8'); // пишемо заголовок
+  //     const formData = new FormData(form);
+
+  //     //певодимо циклом дані в json
+  //     const object = {};
+  //     formData.forEach(function(value, key){
+  //       object[key] = value;
+  //     });
+
+  //     const json = JSON.stringify(object);
+
+
+  //     request.send(json); // formData змінюємо на json + дописуємо стрічку в файл server.php
+  //     request.addEventListener('load', () => {
+  //       if (request.status === 200) {
+  //         console.log(request.response);
+  //         showThanksModal(message.success); 
+  //         statusMessage.remove();
+  //         form.reset();
+  //         } else {
+  //         showThanksModal(message.failure); 
+  //         // statusMessage.textContent = message.failure; 
+  //       }
+  //     });
+  //   });
+  // }
+  // переписали на Fetch
   function postData(form) {
     form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const statusMessage = document.createElement('img');
-      statusMessage.src = message.loading; 
-      statusMessage.style.cssText = `
-        display: block;
-        margin: 0 auto;  
-      `; 
-      // form.append(statusMessage); //деформує флекси на сторінці тож переробимо
-      form.insertAdjacentElement('afterend', statusMessage);
+        e.preventDefault();
 
-      const request = new XMLHttpRequest();
-      request.open('POST', 'server.php')
-      request.setRequestHeader('Content-type', 'application/json; charset=utf-8'); // пишемо заголовок
-      const formData = new FormData(form);
+        let statusMessage = document.createElement('img');
+        statusMessage.src = message.loading;
+        statusMessage.style.cssText = `
+            display: block;
+            margin: 0 auto;
+        `;
+        form.insertAdjacentElement('afterend', statusMessage);
+    
+        const formData = new FormData(form);
 
-      //певодимо циклом дані в json
-      const object = {};
-      formData.forEach(function(value, key){
-        object[key] = value;
-      });
+        const object = {};
+        formData.forEach(function(value, key){
+            object[key] = value;
+        });
 
-      const json = JSON.stringify(object);
-
-
-      request.send(json); // formData змінюємо на json + дописуємо стрічку в файл server.php
-      request.addEventListener('load', () => {
-        if (request.status === 200) {
-          console.log(request.response);
-          showThanksModal(message.success); 
-          statusMessage.remove();
-          form.reset();
-          } else {
-          showThanksModal(message.failure); 
-          // statusMessage.textContent = message.failure; 
-        }
-      });
+        fetch('server.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(object)
+        }).then(data => data.text())
+        .then(data => {
+            console.log(data);
+            showThanksModal(message.success);
+            statusMessage.remove();
+        }).catch(() => {
+            showThanksModal(message.failure);
+        }).finally(() => {
+            form.reset();
+        });
     });
-  }
+} 
+
   // функціяпоказу модального вікна з повідомленням
   function showThanksModal(message) {
     //отримуємо блок існуючого модального вікна
@@ -354,7 +393,19 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
 
-
+      // fetch('https://jsonplaceholder.typicode.com/posts', {
+      //   // створюємо обєкт з налаштуваннями запиту з двома обовязковими параметрами
+      //   // метод
+      //   method: "POST",
+      //   // body
+      //   body: JSON.stringify({name: 'Alex'}),
+      //   //заголовки
+      //   headers: {
+      //     'Content-type' : 'application/json'
+      //   }
+      // })
+      // .then(response => response.json()) //претворить json  в звичайний js обєкт
+      // .then(json => console.log(json));
 
 
 
