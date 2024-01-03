@@ -41,7 +41,7 @@ tabsParent.addEventListener('click', function(event) {
   
   // Timer
 
-  const deadline = '2022-06-11';
+  const deadline = '2024-02-11';
 
   function getTimeRemaining(endtime) {
       const t = Date.parse(endtime) - Date.parse(new Date()),
@@ -298,4 +298,54 @@ tabsParent.addEventListener('click', function(event) {
           closeModal();
       }, 4000);
   }
+
+  // Slider
+
+  const slides = document.querySelectorAll('.offer__slide'),
+        prev = document.querySelector('.offer__slider-prev'),
+        next = document.querySelector('.offer__slider-next'),
+        total = document.querySelector('#total'),
+        current = document.querySelector('#current');
+  let slideIndex = 1;
+  showSlides(slideIndex);
+  // працюємо з таблом кількості слайдів
+  if (slides.length < 10) {
+    total.textContent = `0${slides.length}`;
+  } else {
+    total.textContent = slides.length;
+  }
+  function showSlides (n) {
+    if (n > slides.length){
+      slideIndex = 1;
+    }
+    if (n < 1) {
+      slideIndex = slides.length;
+    }
+
+    slides.forEach(item => item.style.display = 'none');
+    slides[slideIndex - 1].style.display = '';
+      // показуємо номер актуального слайду
+  if (slides.length < 10) {
+    current.textContent = `0${slideIndex}`;
+  } else {
+    current.textContent = slideIndex;
+  }
+  }
+  // лічильник слайдерів
+  function plusSliders(n){
+    showSlides(slideIndex += n);
+  }
+ // призначаємо обробники подій на кнопри клайдера
+  prev.addEventListener('click', () => {
+    plusSliders(-1);
+  });
+  next.addEventListener('click', () => {
+    plusSliders(1);
+  });
+
+
+
+
+
+
 });
