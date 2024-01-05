@@ -375,13 +375,19 @@ tabsParent.addEventListener('click', function(event) {
     indicators.append(dot);
     dots.push(dot); // записуємо в масив dots 
   }
-
+// створимо функцію для переведення чиста з символами в число 500px => 500
+function deleteNotDigits(str) {
+    return +str.replace(/|D/g, '');
+}
 
   next.addEventListener('click', () => {
-    if (offset == +width.slice(0, width.length - 2)*(slides.length - 1)){ // перетворюємо 500px в 500
+    // if (offset == +width.slice(0, width.length - 2)*(slides.length - 1)){ // перетворюємо 500px в 500
+    // if (offset == +width.replace(/|D/g, '')*(slides.length - 1)){ // перетворюємо 500px в 500
+    if (offset == deleteNotDigits(width)*(slides.length - 1)){ // перетворюємо 500px в 500
         offset = 0;
     } else {
-        offset += +width.slice(0, width.length - 2);
+        // offset += +width.slice(0, width.length - 2);
+        offset += deleteNotDigits(width);
     }
     slidesField.style.transform = `translateX(-${offset}px)`;
 
@@ -404,9 +410,9 @@ tabsParent.addEventListener('click', function(event) {
 
   prev.addEventListener('click', () => {
     if (offset == 0){ 
-        offset = +width.slice(0, width.length - 2)*(slides.length - 1);
+        offset = deleteNotDigits(width)*(slides.length - 1);
     } else {
-        offset -= +width.slice(0, width.length - 2);
+        offset -= deleteNotDigits(width);
     }
     slidesField.style.transform = `translateX(-${offset}px)`;
 
